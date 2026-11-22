@@ -164,24 +164,33 @@ struct AttackDetail: View {
                 if let message { Text(message).foregroundStyle(.secondary) }
             }
 
-            Section("Apple Hälsa") {
+            Section {
                 Button(loading ? "Hämtar mätningar…" : "Hämta mätningar") {
                     loading = true
                     Task { await loadHealth() }
                 }
                 .disabled(loading)
-                if let healthError { Text(healthError).foregroundStyle(.secondary) }
+            
+                if let healthError {
+                    Text(healthError).foregroundStyle(.secondary)
+                }
+            
                 if loaded {
                     LabeledContent("Sömn, föregående 24 timmar", value: hours(sleep))
                     if let referenceDate {
-                        LabeledContent("Sömn före \(referenceDate.formatted(date: .abbreviated, time: .shortened))",
-                                       value: hours(referenceSleep))
+                        LabeledContent(
+                            "Sömn före \(referenceDate.formatted(date: .abbreviated, time: .shortened))",
+                            value: hours(referenceSleep)
+                        )
                         Text("Jämförelsen visar 24 timmar utan registrerat anfall.")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                     pointChart("Puls (slag/min)", values: pulse)
                     pointChart("Pulsvariation (ms)", values: hrv)
                 }
+            } header: {
+                Text("Apple Hälsa")
             } footer: {
                 Text("Visar tillgängliga mätningar under de 24 timmar som föregår vald starttid. Tomma perioder har inga tillgängliga mätvärden.")
             }
